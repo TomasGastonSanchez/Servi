@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import fondoLogin from './galery/fondoLogin.jpg'
 import { Container } from 'reactstrap'
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
 
 //Login
@@ -11,7 +12,8 @@ function App() {
 
     //Contenedor de todo el login de mi proyecto
     <Container className="m-0 p-0 w-full h-full">
-      <div className="bg-white h-screen grid grid-cols-1 md:grid-cols-2 w-screen">
+      
+      <div className="bg-white h-screen grid grid-cols-1 md:grid-cols-2 w-screen"> 
         <div className="relative">
             <img src={fondoLogin} alt="Imagen" className="w-full h-full object-cover"/>
           <div className="absolute inset-0 flex items-center justify-center">
@@ -25,7 +27,6 @@ function App() {
           <h1 className='bg-blue-900 p-4 text-white text-center font-semibold shadow-white text-4xl shadow-lg '>
             Servi
           </h1>
-      
           <br />
           <br />
           <h2 className='font-light font-serif from-neutral-400 text-white p-0 text-center'>
@@ -41,7 +42,7 @@ function App() {
             />
 
             <label htmlFor="floatingInputEmail" className="text-light-emphasis hgi-solid hgi-sharp hgi-mail-01">
-              Email
+              <i className="fas fa-envelope"></i> Email
             </label>
 
           </div>
@@ -54,7 +55,7 @@ function App() {
             />
 
             <label htmlFor="floatingInputPassword" className="text-light-emphasis">
-              Contraseña
+              <i className="fa-solid fa-lock"></i> Contraseña
             </label>
 
           </div>
@@ -63,6 +64,7 @@ function App() {
               <button className="btn btn-primary hover:bg-blue-700 transition-color" type="submit">
                 Iniciar Sesión
               </button>
+              
             
           </div>
           <footer className='text-center mt-4 absolute bottom-0 p-1 m-1'>
