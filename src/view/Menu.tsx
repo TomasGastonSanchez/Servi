@@ -29,7 +29,7 @@ function MenuPrincipal() {
   
 }
   const handleSalir= () => {
-    if (window.confirm("¿Estas seguro que deseas salir?")){
+    if (window.confirm("¿Estas seguro que deseas salir? Volverás a tener que iniciar sesión")){
     navigate("/../Login");
   }
 }
