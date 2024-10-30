@@ -3,11 +3,14 @@ import ReactDOM from 'react-dom';
 import fondoLogin from './galery/fondoLogin.jpg'
 import { Container } from 'reactstrap'
 import '@fortawesome/fontawesome-free/css/all.min.css';
+import Logo3 from './galery/Logo3.png';
+import MenuPrincipal from './view/Menu';
+import usuario from './components/usuario'
 
 
 //Login
 
-function App() {
+function Login() {
   return (
 
     //Contenedor de todo el login de mi proyecto
@@ -25,11 +28,11 @@ function App() {
         </div>
         <div className='bg-slate-600'>
           <h1 className='bg-blue-900 p-4 text-white text-center font-semibold shadow-white text-4xl shadow-lg '>
-            Servi
+            <img src={Logo3} alt="Icono" className="w-60 h-23 mx-auto rounded-xl" />
           </h1>
           <br />
           <br />
-          <h2 className='font-light font-serif from-neutral-400 text-white p-0 text-center'>
+          <h2 className='text-white text-2xl font-bold text-center text-4xl'>
             Inicia Sesión:
             </h2>
 
@@ -61,7 +64,7 @@ function App() {
           </div>
           <div className="d-grid gap-2 py-2 m-5 my-2">
       
-              <button className="btn btn-primary hover:bg-blue-700 transition-color" type="submit">
+              <button onClick={MenuPrincipal} className="btn btn-primary hover:bg-blue-700 transition-color" type="submit">
                 Iniciar Sesión
               </button>
               
@@ -76,6 +79,6 @@ function App() {
   );
 }
 
-export default App;
+export default Login;
 
 
