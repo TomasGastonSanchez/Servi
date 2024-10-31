@@ -5,7 +5,7 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import Productos from "./Tablas/Productos";
 import Clientes from './Tablas/Clientes';
 import Ventas from './Tablas/Ventas';
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -30,7 +30,7 @@ function MenuPrincipal() {
 }
   const handleSalir= () => {
     if (window.confirm("¿Estas seguro que deseas salir? Volverás a tener que iniciar sesión")){
-    navigate("/../Login");
+    navigate("/login");
   }
 }
 
@@ -66,7 +66,7 @@ function MenuPrincipal() {
           <br />
           <hr />
 
-          <button onClick={() => alert("¿Seguro que quiere salir?")} className="text-red-700 font-bold inline-block w-10">{/* inline ignora la estilizacion del primer div*/}
+          <button onClick={handleSalir} className="text-red-700 font-bold inline-block w-10">{/* inline ignora la estilizacion del primer div*/}
             Salir
           </button>
 
