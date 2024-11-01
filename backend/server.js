@@ -1,5 +1,6 @@
 const express = require('express'); 
 const cors = require('cors');
+const conexion = require('./db'); // Importar la conexión
 
 const app = express();
 
@@ -14,24 +15,29 @@ app.get('/', (req, res) => {
     res.send('API funcionando');
 });
 
-// Simulando datos de clientes
-const clientes = [
-    { id: 1, nombre: 'Juan', apellido: 'Pérez', telefono: '123456789', domicilio: 'Calle 1', cp: '1000' },
-    { id: 2, nombre: 'Ana', apellido: 'García', telefono: '987654321', domicilio: 'Calle 2', cp: '2000' },
-];
-
 // Ruta para obtener todos los clientes
 app.get('/clientes', (req, res) => {
-    res.json(clientes);
+    const query = 'SELECT * FROM clientes'; // Ajusta esto según el nombre de tu tabla
+    conexion.query(query, (error, resultados) => {
+        if (error) {
+            return res.status(500).json({ message: 'Error al obtener clientes' });
+        }
+        res.json(resultados);
+    });
 });
 
 // Ruta para agregar un nuevo cliente
 app.post('/clientes', (req, res) => {
     const nuevoCliente = req.body; // Obtener el cliente del cuerpo de la solicitud
-    // Asegúrate de que el nuevo cliente tenga un id único
-    nuevoCliente.id = clientes.length + 1; // Generar un nuevo ID
-    clientes.push(nuevoCliente); // Agregar el nuevo cliente al array
-    res.status(201).json(nuevoCliente); // Responder con el nuevo cliente creado
+    const query = 'INSERT INTO clientes (nombre, apellido, telefono, domicilio, cp) VALUES (?, ?, ?, ?, ?)';
+    
+    conexion.query(query, [nuevoCliente.nombre, nuevoCliente.apellido, nuevoCliente.telefono, nuevoCliente.domicilio, nuevoCliente.cp], (error, resultados) => {
+        if (error) {
+            return res.status(400).json({ message: 'Error al agregar cliente' });
+        }
+        // En caso de éxito, puedes responder con el cliente agregado, aunque no tendrás el ID asignado automáticamente
+        res.status(201).json({ id: resultados.insertId, ...nuevoCliente });
+    });
 });
 
 const PORT = process.env.PORT || 3000;
