@@ -1,113 +1,102 @@
-import React, { useState } from 'react';
-import { Button, Table, Modal, ModalHeader, ModalBody, ModalFooter, Form, FormGroup, Label, Input } from 'reactstrap';
+import React, { useEffect, useState } from 'react';
+import { getVentas, addVenta } from '../../api/api';
 
-// Definir el tipo de Venta
 interface Venta {
-  id_venta: number;
-  fecha: string;
-  id_cliente: number;
-  id_producto: number;
+    id_venta: number; // Cambiado de id_ventas a id_venta
+    fecha: string; // Podrías cambiar a Date si lo prefieres
+    id_cliente: number;
+    id_producto: number;
 }
 
-// Datos de ejemplo para ventas
-const DatosVentas: Venta[] = [
-  { id_venta: 1, fecha: '2024-09-01', id_cliente: 1, id_producto: 2 },
-  { id_venta: 2, fecha: '2024-09-02', id_cliente: 2, id_producto: 1 },
-  { id_venta: 3, fecha: '2024-09-03', id_cliente: 3, id_producto: 3 },
-  { id_venta: 4, fecha: '2024-09-04', id_cliente: 4, id_producto: 4 }
-];
+// Cambiamos a Omit<Venta, 'id_venta'> para reflejar correctamente el tipo
+const Ventas = () => {
+    const [ventas, setVentas] = useState<Venta[]>([]);
+    const [nuevaVenta, setNuevaVenta] = useState<Omit<Venta, 'id_venta'>>({
+        fecha: '',
+        id_cliente: 0,
+        id_producto: 0,
+    });
+    const [mensaje, setMensaje] = useState<string | null>(null);
 
-function Ventas() {
-  const [ventas] = useState<Venta[]>(DatosVentas);
-  const [modal, setModal] = useState(false);
-  const [ventaSeleccionada, setVentaSeleccionada] = useState<Venta | null>(null);
+    useEffect(() => {
+        const cargarVentas = async () => {
+            try {
+                const data: Venta[] = await getVentas(); // Asegúrate que esto retorna un array de Venta
+                setVentas(data);
+            } catch (error) {
+                console.error("Error al cargar ventas:", error);
+            }
+        };
+        cargarVentas();
+    }, []);
 
-  const toggle = () => setModal(!modal);
+    const manejarEnvio = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setMensaje(null); // Reinicia el mensaje
+        try {
+            const ventaAgregada: Venta = await addVenta(nuevaVenta); // Asegúrate que esto retorna un objeto Venta
+            setVentas([...ventas, ventaAgregada]); // Aquí se espera que ventaAgregada tenga id_venta
+            setNuevaVenta({ fecha: '', id_cliente: 0, id_producto: 0 });
+            setMensaje('Venta agregada con éxito!');
+        } catch (error) {
+            console.error("Error al agregar venta:", error);
+            setMensaje('Error al agregar la venta. Inténtalo de nuevo.');
+        }
+    };
 
-  const handleEditar = (venta: Venta) => {
-    setVentaSeleccionada(venta);
-    toggle();
-  };
-
-  return (
-    <div className="bg-blue-900 text-white p-8 rounded-xl shadow-lg h-full w-full">
-      <h1 className="text-center text-3xl font-bold mb-6">Gestión de Ventas</h1>
-
-      <div className="flex justify-center gap-4 mb-6">
-        <Button 
-          onClick={toggle} 
-          color="success"
-          className="font-bold py-2 px-4 rounded-3xl"
-        >
-          Agregar Venta
-        </Button>
-      </div>
-
-      <Table dark bordered responsive className="text-center">
-        <thead>
-          <tr>
-            <th>ID Venta</th>
-            <th>Fecha</th>
-            <th>ID Cliente</th>
-            <th>ID Producto</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {ventas.map(venta => (
-            <tr key={venta.id_venta}>
-              <td>{venta.id_venta}</td>
-              <td>{venta.fecha}</td>
-              <td>{venta.id_cliente}</td>
-              <td>{venta.id_producto}</td>
-              <td className="d-flex justify-content-center">
-                <Button color="primary" className="mr-2" onClick={() => handleEditar(venta)}>
-                  Editar
-                </Button>
-                <Button color="danger">Eliminar</Button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
-
-      <Modal isOpen={modal} toggle={toggle}>
-        <ModalHeader toggle={toggle} className="bg-gray-700 text-white">Editar Venta</ModalHeader>
-        <ModalBody className="bg-blue-900 text-white">
-          <Form>
-            <FormGroup>
-              <Label for="fecha">Fecha</Label>
-              <Input 
-                type="date" 
-                id="fecha" 
-                defaultValue={ventaSeleccionada?.fecha || ''} 
-              />
-            </FormGroup>
-            <FormGroup>
-              <Label for="id_cliente">ID Cliente</Label>
-              <Input 
-                type="number" 
-                id="id_cliente" 
-                defaultValue={ventaSeleccionada?.id_cliente || 0} 
-              />
-            </FormGroup>
-            <FormGroup>
-              <Label for="id_producto">ID Producto</Label>
-              <Input 
-                type="number" 
-                id="id_producto" 
-                defaultValue={ventaSeleccionada?.id_producto || 0} 
-              />
-            </FormGroup>
-          </Form>
-        </ModalBody>
-        <ModalFooter className="bg-gray-700 text-white">
-          <Button color="primary">Guardar</Button>
-          <Button color="secondary" onClick={toggle}>Cancelar</Button>
-        </ModalFooter>
-      </Modal>
-    </div>
-  );
-}
+    return (
+        <div className="container mx-auto p-4">
+            <h2 className="text-2xl font-bold mb-4">Ventas</h2>
+            <form onSubmit={manejarEnvio} className="mb-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <input
+                        type="date"
+                        placeholder="Fecha"
+                        value={nuevaVenta.fecha}
+                        onChange={(e) => setNuevaVenta({ ...nuevaVenta, fecha: e.target.value })}
+                        required
+                        className="border p-2"
+                    />
+                    <input
+                        type="number"
+                        placeholder="ID Cliente"
+                        value={nuevaVenta.id_cliente}
+                        onChange={(e) => setNuevaVenta({ ...nuevaVenta, id_cliente: Number(e.target.value) })}
+                        required
+                        className="border p-2"
+                    />
+                    <input
+                        type="number"
+                        placeholder="ID Producto"
+                        value={nuevaVenta.id_producto}
+                        onChange={(e) => setNuevaVenta({ ...nuevaVenta, id_producto: Number(e.target.value) })}
+                        required
+                        className="border p-2"
+                    />
+                </div>
+                <button type="submit" className="bg-blue-500 text-white px-4 py-2 mt-2 rounded">Agregar Venta</button>
+            </form>
+            {mensaje && <div className="bg-green-500 text-white p-2 rounded mb-4">{mensaje}</div>}
+            <table className="min-w-full bg-white border border-gray-200">
+                <thead>
+                    <tr className="bg-gray-200">
+                        <th className="py-2 px-4 border-b">Fecha</th>
+                        <th className="py-2 px-4 border-b">ID Cliente</th>
+                        <th className="py-2 px-4 border-b">ID Producto</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {ventas.map(venta => (
+                        <tr key={venta.id_venta} className="hover:bg-gray-100"> {/* Cambiado a id_venta */}
+                            <td className="py-2 px-4 border-b">{venta.fecha}</td>
+                            <td className="py-2 px-4 border-b">{venta.id_cliente}</td>
+                            <td className="py-2 px-4 border-b">{venta.id_producto}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
+    );
+};
 
 export default Ventas;

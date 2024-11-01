@@ -10,7 +10,7 @@ function Login() {
 
   const handleLogin = () => {
     // Aquí puedes agregar la lógica de autenticación si es necesario
-    navigate('/'); // Redirige a la página principal después de iniciar sesión
+    navigate('/menu'); // Redirige a la página principal después de iniciar sesión
   };
   
   return (

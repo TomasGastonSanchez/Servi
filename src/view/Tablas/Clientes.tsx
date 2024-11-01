@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { getClientes, addCliente } from '../../api/api';
 
 interface Cliente {
-    id: number;
+    id_cliente: number; // Cambiado de 'id' a 'id_cliente'
     nombre: string;
     apellido: string;
     telefono: number;
@@ -12,10 +12,10 @@ interface Cliente {
 
 const Clientes = () => {
     const [clientes, setClientes] = useState<Cliente[]>([]);
-    const [nuevoCliente, setNuevoCliente] = useState<Omit<Cliente, 'id'>>({
+    const [nuevoCliente, setNuevoCliente] = useState<Omit<Cliente, 'id_cliente'>>({ // Cambiado a 'id_cliente'
         nombre: '',
         apellido: '',
-        telefono: 0, // Cambiado a número
+        telefono: 0,
         domicilio: '',
         cp: ''
     });
@@ -68,7 +68,7 @@ const Clientes = () => {
                 </thead>
                 <tbody>
                     {clientes.map(cliente => (
-                        <tr key={cliente.id} className="hover:bg-gray-100">
+                        <tr key={cliente.id_cliente} className="hover:bg-gray-100"> {/* Cambiado 'cliente.id' a 'cliente.id_cliente' */}
                             <td className="py-2 px-4 border-b">{cliente.nombre}</td>
                             <td className="py-2 px-4 border-b">{cliente.apellido}</td>
                             <td className="py-2 px-4 border-b">{cliente.telefono}</td>

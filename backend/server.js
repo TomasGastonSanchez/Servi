@@ -67,6 +67,31 @@ app.post('/productos', (req, res) => {
     });
 });
 
+// Ruta para obtener todas las ventas
+app.get('/ventas', (req, res) => {
+    const query = 'SELECT * FROM ventas'; // Ajusta esto según el nombre de tu tabla
+    conexion.query(query, (error, resultados) => {
+        if (error) {
+            return res.status(500).json({ message: 'Error al obtener ventas' });
+        }
+        res.json(resultados);
+    });
+});
+
+// Ruta para agregar una nueva venta
+app.post('/ventas', (req, res) => {
+    const nuevaVenta = req.body; // Obtener la venta del cuerpo de la solicitud
+    const query = 'INSERT INTO ventas (fecha, id_cliente, id_producto) VALUES (?, ?, ?)';
+    
+    conexion.query(query, [nuevaVenta.fecha, nuevaVenta.id_cliente, nuevaVenta.id_producto], (error, resultados) => {
+        if (error) {
+            return res.status(400).json({ message: 'Error al agregar venta' });
+        }
+        // En caso de éxito, puedes responder con la venta agregada, aunque no tendrás el ID asignado automáticamente
+        res.status(201).json({ id: resultados.insertId, ...nuevaVenta });
+    });
+});
+
 const PORT = process.env.PORT || 3000;
 
 // Iniciar el servidor
