@@ -40,6 +40,33 @@ app.post('/clientes', (req, res) => {
     });
 });
 
+// Nuevas rutas para Productos
+
+// Ruta para obtener todos los productos
+app.get('/productos', (req, res) => {
+    const query = 'SELECT * FROM productos'; // Asegúrate de que este nombre de tabla sea correcto
+    conexion.query(query, (error, resultados) => {
+        if (error) {
+            return res.status(500).json({ message: 'Error al obtener productos' });
+        }
+        res.json(resultados);
+    });
+});
+
+// Ruta para agregar un nuevo producto
+app.post('/productos', (req, res) => {
+    const nuevoProducto = req.body; // Obtener el producto del cuerpo de la solicitud
+    const query = 'INSERT INTO productos (nombre, descripcion, precio) VALUES (?, ?, ?)';
+    
+    conexion.query(query, [nuevoProducto.nombre, nuevoProducto.descripcion, nuevoProducto.precio], (error, resultados) => {
+        if (error) {
+            return res.status(400).json({ message: 'Error al agregar producto' });
+        }
+        // En caso de éxito, responde con el producto agregado
+        res.status(201).json({ id: resultados.insertId, ...nuevoProducto });
+    });
+});
+
 const PORT = process.env.PORT || 3000;
 
 // Iniciar el servidor

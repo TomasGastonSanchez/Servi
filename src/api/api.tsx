@@ -11,6 +11,14 @@ interface Cliente {
     cp: string;
 }
 
+// Define la estructura del Producto
+interface Producto {
+    id: number;
+    nombre: string;
+    descripcion: string;
+    precio: number; // Cambiado a número
+}
+
 // Cambia la URL de la API al puerto correcto
 const API_URL = 'http://localhost:3000';
 
@@ -23,5 +31,19 @@ export const getClientes = async (): Promise<Cliente[]> => {
 // Función para agregar un nuevo cliente
 export const addCliente = async (nuevoCliente: Omit<Cliente, 'id'>): Promise<Cliente> => {
     const response = await axios.post<Cliente>(`${API_URL}/clientes`, nuevoCliente);
+    return response.data;
+};
+
+// Nuevas funciones para Productos
+
+// Función para obtener todos los productos
+export const getProductos = async (): Promise<Producto[]> => {
+    const response = await axios.get<Producto[]>(`${API_URL}/productos`);
+    return response.data;
+};
+
+// Función para agregar un nuevo producto
+export const addProducto = async (nuevoProducto: Omit<Producto, 'id'>): Promise<Producto> => {
+    const response = await axios.post<Producto>(`${API_URL}/productos`, nuevoProducto);
     return response.data;
 };
