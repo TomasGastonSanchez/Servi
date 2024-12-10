@@ -2,18 +2,18 @@ import React, { useEffect, useState } from 'react';
 import { getProductos, addProducto } from '../../api/api';
 
 interface Producto {
-    id_producto: number; // Cambiado de 'id' a 'id_producto'
+    id_producto: number;
     nombre: string;
     descripcion: string;
-    precio: number; // Asegúrate de que esto sea un número
+    precio: number;
 }
 
 const Productos = () => {
     const [productos, setProductos] = useState<Producto[]>([]);
-    const [nuevoProducto, setNuevoProducto] = useState<Omit<Producto, 'id_producto'>>({ // Cambiado a 'id_producto'
+    const [nuevoProducto, setNuevoProducto] = useState<Omit<Producto, 'id_producto'>>({
         nombre: '',
         descripcion: '',
-        precio: 0 // Asegúrate de que esto sea un número
+        precio: 0
     });
     const [mensaje, setMensaje] = useState<string | null>(null);
 
@@ -23,7 +23,7 @@ const Productos = () => {
                 const data = await getProductos();
                 const productosConPrecio = data.map((producto: Producto) => ({
                     ...producto,
-                    precio: parseFloat(producto.precio as unknown as string) || 0, // Convierte a número o establece 0
+                    precio: parseFloat(producto.precio as unknown as string) || 0,
                 }));
                 setProductos(productosConPrecio);
             } catch (error) {
@@ -35,7 +35,7 @@ const Productos = () => {
 
     const manejarEnvio = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        setMensaje(null); // Reinicia el mensaje
+        setMensaje(null);
         try {
             const productoAgregado = await addProducto(nuevoProducto);
             setProductos([...productos, productoAgregado]);
@@ -48,55 +48,43 @@ const Productos = () => {
     };
 
     return (
-        <div className="container mx-auto p-4">
-            <h2 className="text-2xl font-bold mb-4">Productos</h2>
-            <form onSubmit={manejarEnvio} className="mb-4">
+        <div className="container mx-auto p-6 bg-blue-600 text-white rounded-lg shadow-lg">
+            <h2 className="text-3xl font-bold mb-6 text-center">Productos</h2>
+            <form onSubmit={manejarEnvio} className="bg-blue-500 p-6 rounded-lg mb-6 shadow-md">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <input
-                        type="text"
-                        placeholder="Nombre"
-                        value={nuevoProducto.nombre}
-                        onChange={(e) => setNuevoProducto({ ...nuevoProducto, nombre: e.target.value })}
-                        required
-                        className="border p-2"
-                    />
-                    <input
-                        type="text"
-                        placeholder="Descripción"
-                        value={nuevoProducto.descripcion}
-                        onChange={(e) => setNuevoProducto({ ...nuevoProducto, descripcion: e.target.value })}
-                        required
-                        className="border p-2"
-                    />
-                    <input
-                        type="number"
-                        placeholder="Precio"
-                        value={nuevoProducto.precio}
-                        onChange={(e) => setNuevoProducto({ ...nuevoProducto, precio: Number(e.target.value) })}
-                        required
-                        className="border p-2"
-                    />
+                    <div>
+                        <label className="block mb-1 font-semibold">Nombre</label>
+                        <input type="text" placeholder="Nombre" value={nuevoProducto.nombre} onChange={(e) => setNuevoProducto({ ...nuevoProducto, nombre: e.target.value })} required className="p-3 rounded border border-gray-300 bg-white text-gray-700 w-full" />
+                    </div>
+                    <div>
+                        <label className="block mb-1 font-semibold">Descripción</label>
+                        <input type="text" placeholder="Descripción" value={nuevoProducto.descripcion} onChange={(e) => setNuevoProducto({ ...nuevoProducto, descripcion: e.target.value })} required className="p-3 rounded border border-gray-300 bg-white text-gray-700 w-full" />
+                    </div>
+                    <div>
+                        <label className="block mb-1 font-semibold">Precio</label>
+                        <input type="number" placeholder="Precio" value={nuevoProducto.precio} onChange={(e) => setNuevoProducto({ ...nuevoProducto, precio: Number(e.target.value) })} required className="p-3 rounded border border-gray-300 bg-white text-gray-700 w-full" />
+                    </div>
                 </div>
-                <button type="submit" className="bg-blue-500 text-white px-4 py-2 mt-2 rounded">Agregar Producto</button>
+                <button type="submit" className="w-full bg-green-500 text-white mt-4 py-2 rounded-lg font-semibold hover:bg-green-600 transition">Agregar Producto</button>
             </form>
             {mensaje && <div className="bg-green-500 text-white p-2 rounded mb-4">{mensaje}</div>}
             {productos.length === 0 ? (
                 <p>No hay productos disponibles.</p>
             ) : (
-                <table className="min-w-full bg-white border border-gray-200">
-                    <thead>
-                        <tr className="bg-gray-200">
-                            <th className="py-2 px-4 border-b">Nombre</th>
-                            <th className="py-2 px-4 border-b">Descripción</th>
-                            <th className="py-2 px-4 border-b">Precio</th>
+                <table className="w-full bg-white text-gray-800 rounded-lg shadow-md overflow-hidden">
+                    <thead className="bg-blue-500 text-white">
+                        <tr>
+                            <th className="py-3 px-4 border-b">Nombre</th>
+                            <th className="py-3 px-4 border-b">Descripción</th>
+                            <th className="py-3 px-4 border-b">Precio</th>
                         </tr>
                     </thead>
                     <tbody>
                         {productos.map(producto => (
-                            <tr key={producto.id_producto} className="hover:bg-gray-100"> {/* Cambiado a 'id_producto' */}
-                                <td className="py-2 px-4 border-b">{producto.nombre}</td>
-                                <td className="py-2 px-4 border-b">{producto.descripcion}</td>
-                                <td className="py-2 px-4 border-b">${producto.precio.toFixed(2)}</td>
+                            <tr key={producto.id_producto} className="hover:bg-gray-100">
+                                <td className="py-3 px-4 border-b">{producto.nombre}</td>
+                                <td className="py-3 px-4 border-b">{producto.descripcion}</td>
+                                <td className="py-3 px-4 border-b">${producto.precio.toFixed(2)}</td>
                             </tr>
                         ))}
                     </tbody>

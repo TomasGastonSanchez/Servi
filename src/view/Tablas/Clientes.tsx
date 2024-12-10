@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { getClientes, addCliente } from '../../api/api';
 
 interface Cliente {
-    id_cliente: number; // Cambiado de 'id' a 'id_cliente'
+    id_cliente: number;
     nombre: string;
     apellido: string;
     telefono: number;
@@ -12,7 +12,7 @@ interface Cliente {
 
 const Clientes = () => {
     const [clientes, setClientes] = useState<Cliente[]>([]);
-    const [nuevoCliente, setNuevoCliente] = useState<Omit<Cliente, 'id_cliente'>>({ // Cambiado a 'id_cliente'
+    const [nuevoCliente, setNuevoCliente] = useState<Omit<Cliente, 'id_cliente'>>({
         nombre: '',
         apellido: '',
         telefono: 0,
@@ -44,36 +44,51 @@ const Clientes = () => {
     };
 
     return (
-        <div className="container mx-auto p-4">
-            <h2 className="text-2xl font-bold mb-4">Clientes</h2>
-            <form onSubmit={manejarEnvio} className="mb-4">
+        <div className="container mx-auto p-6 bg-blue-600 text-white rounded-lg shadow-lg">
+            <h2 className="text-3xl font-bold mb-6 text-center">Clientes</h2>
+            <form onSubmit={manejarEnvio} className="bg-blue-500 p-6 rounded-lg mb-6 shadow-md">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <input type="text" placeholder="Nombre" value={nuevoCliente.nombre} onChange={(e) => setNuevoCliente({ ...nuevoCliente, nombre: e.target.value })} required className="border p-2" />
-                    <input type="text" placeholder="Apellido" value={nuevoCliente.apellido} onChange={(e) => setNuevoCliente({ ...nuevoCliente, apellido: e.target.value })} required className="border p-2" />
-                    <input type="number" placeholder="Teléfono" value={nuevoCliente.telefono} onChange={(e) => setNuevoCliente({ ...nuevoCliente, telefono: Number(e.target.value) })} required className="border p-2" />
-                    <input type="text" placeholder="Domicilio" value={nuevoCliente.domicilio} onChange={(e) => setNuevoCliente({ ...nuevoCliente, domicilio: e.target.value })} required className="border p-2" />
-                    <input type="text" placeholder="Código Postal" value={nuevoCliente.cp} onChange={(e) => setNuevoCliente({ ...nuevoCliente, cp: e.target.value })} required className="border p-2" />
+                    <div>
+                        <label className="block mb-1 font-semibold">Nombre</label>
+                        <input type="text" placeholder="Nombre" value={nuevoCliente.nombre} onChange={(e) => setNuevoCliente({ ...nuevoCliente, nombre: e.target.value })} required className="p-3 rounded border border-gray-300 bg-white text-gray-700 w-full" />
+                    </div>
+                    <div>
+                        <label className="block mb-1 font-semibold">Apellido</label>
+                        <input type="text" placeholder="Apellido" value={nuevoCliente.apellido} onChange={(e) => setNuevoCliente({ ...nuevoCliente, apellido: e.target.value })} required className="p-3 rounded border border-gray-300 bg-white text-gray-700 w-full" />
+                    </div>
+                    <div>
+                        <label className="block mb-1 font-semibold">Teléfono</label>
+                        <input type="number" placeholder="Teléfono" value={nuevoCliente.telefono} onChange={(e) => setNuevoCliente({ ...nuevoCliente, telefono: Number(e.target.value) })} required className="p-3 rounded border border-gray-300 bg-white text-gray-700 w-full" />
+                    </div>
+                    <div>
+                        <label className="block mb-1 font-semibold">Domicilio</label>
+                        <input type="text" placeholder="Domicilio" value={nuevoCliente.domicilio} onChange={(e) => setNuevoCliente({ ...nuevoCliente, domicilio: e.target.value })} required className="p-3 rounded border border-gray-300 bg-white text-gray-700 w-full" />
+                    </div>
+                    <div>
+                        <label className="block mb-1 font-semibold">Código Postal</label>
+                        <input type="text" placeholder="Código Postal" value={nuevoCliente.cp} onChange={(e) => setNuevoCliente({ ...nuevoCliente, cp: e.target.value })} required className="p-3 rounded border border-gray-300 bg-white text-gray-700 w-full" />
+                    </div>
                 </div>
-                <button type="submit" className="bg-blue-500 text-white px-4 py-2 mt-2 rounded">Agregar Cliente</button>
+                <button type="submit" className="w-full bg-green-500 text-white mt-4 py-2 rounded-lg font-semibold hover:bg-green-600 transition">Agregar Cliente</button>
             </form>
-            <table className="min-w-full bg-white border border-gray-200">
-                <thead>
-                    <tr className="bg-gray-200">
-                        <th className="py-2 px-4 border-b">Nombre</th>
-                        <th className="py-2 px-4 border-b">Apellido</th>
-                        <th className="py-2 px-4 border-b">Teléfono</th>
-                        <th className="py-2 px-4 border-b">Domicilio</th>
-                        <th className="py-2 px-4 border-b">Código Postal</th>
+            <table className="w-full bg-white text-gray-800 rounded-lg shadow-md overflow-hidden">
+                <thead className="bg-blue-500 text-white">
+                    <tr>
+                        <th className="py-3 px-4 border-b">Nombre</th>
+                        <th className="py-3 px-4 border-b">Apellido</th>
+                        <th className="py-3 px-4 border-b">Teléfono</th>
+                        <th className="py-3 px-4 border-b">Domicilio</th>
+                        <th className="py-3 px-4 border-b">Código Postal</th>
                     </tr>
                 </thead>
                 <tbody>
                     {clientes.map(cliente => (
-                        <tr key={cliente.id_cliente} className="hover:bg-gray-100"> {/* Cambiado 'cliente.id' a 'cliente.id_cliente' */}
-                            <td className="py-2 px-4 border-b">{cliente.nombre}</td>
-                            <td className="py-2 px-4 border-b">{cliente.apellido}</td>
-                            <td className="py-2 px-4 border-b">{cliente.telefono}</td>
-                            <td className="py-2 px-4 border-b">{cliente.domicilio}</td>
-                            <td className="py-2 px-4 border-b">{cliente.cp}</td>
+                        <tr key={cliente.id_cliente} className="hover:bg-gray-100">
+                            <td className="py-3 px-4 border-b">{cliente.nombre}</td>
+                            <td className="py-3 px-4 border-b">{cliente.apellido}</td>
+                            <td className="py-3 px-4 border-b">{cliente.telefono}</td>
+                            <td className="py-3 px-4 border-b">{cliente.domicilio}</td>
+                            <td className="py-3 px-4 border-b">{cliente.cp}</td>
                         </tr>
                     ))}
                 </tbody>

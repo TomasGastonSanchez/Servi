@@ -1,9 +1,8 @@
-// src/api/api.tsx
 import axios from 'axios';
 
-// Define la estructura del Cliente
+// Estructura del Cliente
 interface Cliente {
-    id_cliente: number; // Cambiado de 'id' a 'id_cliente'
+    id_cliente: number;
     nombre: string;
     apellido: string;
     telefono: number;
@@ -11,23 +10,40 @@ interface Cliente {
     cp: string;
 }
 
-// Define la estructura del Producto
+// Estructura del Producto
 interface Producto {
-    id_producto: number; // Cambiado de 'id' a 'id_producto'
+    id_producto: number;
     nombre: string;
     descripcion: string;
-    precio: number; // Cambiado a número
+    precio: number;
 }
 
-// Define la estructura de la Venta
+// Estructura de la Venta
 interface Venta {
-    id_venta: number; // Cambiado de 'id' a 'id_venta'
-    fecha: string; // Puedes usar Date si lo prefieres
-    id_cliente: number; // Mantenido como 'id_cliente'
-    id_producto: number; // Mantenido como 'id_producto'
+    id_venta: number;
+    fecha: string; 
+    id_cliente: number;
+    id_producto: number;
 }
 
-// Cambia la URL de la API al puerto correcto
+// Estructura del Usuario
+interface Usuario {
+    id_usuario: number;
+    email: string;
+    password: string;
+}
+
+// Estructura del Detalle de Ventas
+interface DetalleVenta {
+    id_detalle_venta: number;
+    id_venta: number;
+    id_producto: number;
+    cantidad: number;
+    precio_unitario: number;
+    subtotal: number;
+}
+
+// URL de la API 
 const API_URL = 'http://localhost:3000';
 
 // Función para obtener todos los clientes
@@ -37,12 +53,10 @@ export const getClientes = async (): Promise<Cliente[]> => {
 };
 
 // Función para agregar un nuevo cliente
-export const addCliente = async (nuevoCliente: Omit<Cliente, 'id_cliente'>): Promise<Cliente> => { // Cambiado a 'id_cliente'
+export const addCliente = async (nuevoCliente: Omit<Cliente, 'id_cliente'>): Promise<Cliente> => {
     const response = await axios.post<Cliente>(`${API_URL}/clientes`, nuevoCliente);
     return response.data;
 };
-
-// Nuevas funciones para Productos
 
 // Función para obtener todos los productos
 export const getProductos = async (): Promise<Producto[]> => {
@@ -51,7 +65,7 @@ export const getProductos = async (): Promise<Producto[]> => {
 };
 
 // Función para agregar un nuevo producto
-export const addProducto = async (nuevoProducto: Omit<Producto, 'id_producto'>): Promise<Producto> => { // Cambiado a 'id_producto'
+export const addProducto = async (nuevoProducto: Omit<Producto, 'id_producto'>): Promise<Producto> => {
     const response = await axios.post<Producto>(`${API_URL}/productos`, nuevoProducto);
     return response.data;
 };
@@ -63,7 +77,31 @@ export const getVentas = async (): Promise<Venta[]> => {
 };
 
 // Función para agregar una nueva venta
-export const addVenta = async (nuevaVenta: Omit<Venta, 'id_venta'>): Promise<Venta> => { // Cambiado a 'id_venta'
+export const addVenta = async (nuevaVenta: Omit<Venta, 'id_venta'>): Promise<Venta> => {
     const response = await axios.post<Venta>(`${API_URL}/ventas`, nuevaVenta);
+    return response.data;
+};
+
+// Función para obtener todos los usuarios
+export const getUsuarios = async (): Promise<Usuario[]> => {
+    const response = await axios.get<Usuario[]>(`${API_URL}/usuarios`);
+    return response.data;
+};
+
+// Función para agregar un nuevo usuario
+export const addUsuario = async (nuevoUsuario: Omit<Usuario, 'id_usuario'>): Promise<Usuario> => {
+    const response = await axios.post<Usuario>(`${API_URL}/usuarios`, nuevoUsuario);
+    return response.data;
+};
+
+// Función para obtener todos los detalles de ventas
+export const getDetalleVentas = async (): Promise<DetalleVenta[]> => {
+    const response = await axios.get<DetalleVenta[]>(`${API_URL}/detalles_ventas`);
+    return response.data;
+};
+
+// Función para agregar un nuevo detalle de venta
+export const addDetalleVenta = async (nuevoDetalleVenta: Omit<DetalleVenta, 'id_detalle_venta'>): Promise<DetalleVenta> => {
+    const response = await axios.post<DetalleVenta>(`${API_URL}/detalles_ventas`, nuevoDetalleVenta);
     return response.data;
 };

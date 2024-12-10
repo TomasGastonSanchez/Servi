@@ -1,5 +1,6 @@
 const express = require('express'); 
 const cors = require('cors');
+const bcrypt = require('bcrypt');
 const conexion = require('./db'); // Importar la conexión
 
 const app = express();
@@ -15,9 +16,33 @@ app.get('/', (req, res) => {
     res.send('API funcionando');
 });
 
+// Ruta para iniciar sesión
+app.post('/api/login', async (req, res) => {
+    const { usuario, contrasena } = req.body;
+
+    const query = 'SELECT * FROM Usuarios WHERE usuario = ?';
+    conexion.query(query, [usuario], async (error, resultados) => {
+        if (error) {
+            return res.status(500).json({ message: 'Error en la base de datos' });
+        }
+
+        if (resultados.length === 0) {
+            return res.status(401).json({ message: 'Usuario o contraseña incorrectos' });
+        }
+
+        const user = resultados[0];
+        const match = await bcrypt.compare(contrasena, user.contrasena);
+        if (!match) {
+            return res.status(401).json({ message: 'Usuario o contraseña incorrectos' });
+        }
+
+        res.status(200).json({ message: 'Inicio de sesión exitoso' });
+    });
+});
+
 // Ruta para obtener todos los clientes
 app.get('/clientes', (req, res) => {
-    const query = 'SELECT * FROM clientes'; // Ajusta esto según el nombre de tu tabla
+    const query = 'SELECT * FROM clientes';
     conexion.query(query, (error, resultados) => {
         if (error) {
             return res.status(500).json({ message: 'Error al obtener clientes' });
@@ -28,23 +53,20 @@ app.get('/clientes', (req, res) => {
 
 // Ruta para agregar un nuevo cliente
 app.post('/clientes', (req, res) => {
-    const nuevoCliente = req.body; // Obtener el cliente del cuerpo de la solicitud
+    const nuevoCliente = req.body;
     const query = 'INSERT INTO clientes (nombre, apellido, telefono, domicilio, cp) VALUES (?, ?, ?, ?, ?)';
     
     conexion.query(query, [nuevoCliente.nombre, nuevoCliente.apellido, nuevoCliente.telefono, nuevoCliente.domicilio, nuevoCliente.cp], (error, resultados) => {
         if (error) {
             return res.status(400).json({ message: 'Error al agregar cliente' });
         }
-        // En caso de éxito, puedes responder con el cliente agregado, aunque no tendrás el ID asignado automáticamente
         res.status(201).json({ id: resultados.insertId, ...nuevoCliente });
     });
 });
 
 // Nuevas rutas para Productos
-
-// Ruta para obtener todos los productos
 app.get('/productos', (req, res) => {
-    const query = 'SELECT * FROM productos'; // Asegúrate de que este nombre de tabla sea correcto
+    const query = 'SELECT * FROM productos';
     conexion.query(query, (error, resultados) => {
         if (error) {
             return res.status(500).json({ message: 'Error al obtener productos' });
@@ -53,23 +75,21 @@ app.get('/productos', (req, res) => {
     });
 });
 
-// Ruta para agregar un nuevo producto
 app.post('/productos', (req, res) => {
-    const nuevoProducto = req.body; // Obtener el producto del cuerpo de la solicitud
+    const nuevoProducto = req.body;
     const query = 'INSERT INTO productos (nombre, descripcion, precio) VALUES (?, ?, ?)';
     
     conexion.query(query, [nuevoProducto.nombre, nuevoProducto.descripcion, nuevoProducto.precio], (error, resultados) => {
         if (error) {
             return res.status(400).json({ message: 'Error al agregar producto' });
         }
-        // En caso de éxito, responde con el producto agregado
         res.status(201).json({ id: resultados.insertId, ...nuevoProducto });
     });
 });
 
-// Ruta para obtener todas las ventas
+// Nuevas rutas para Ventas
 app.get('/ventas', (req, res) => {
-    const query = 'SELECT * FROM ventas'; // Ajusta esto según el nombre de tu tabla
+    const query = 'SELECT * FROM ventas';
     conexion.query(query, (error, resultados) => {
         if (error) {
             return res.status(500).json({ message: 'Error al obtener ventas' });
@@ -78,18 +98,73 @@ app.get('/ventas', (req, res) => {
     });
 });
 
-// Ruta para agregar una nueva venta
 app.post('/ventas', (req, res) => {
-    const nuevaVenta = req.body; // Obtener la venta del cuerpo de la solicitud
+    const nuevaVenta = req.body;
     const query = 'INSERT INTO ventas (fecha, id_cliente, id_producto) VALUES (?, ?, ?)';
     
     conexion.query(query, [nuevaVenta.fecha, nuevaVenta.id_cliente, nuevaVenta.id_producto], (error, resultados) => {
         if (error) {
             return res.status(400).json({ message: 'Error al agregar venta' });
         }
-        // En caso de éxito, puedes responder con la venta agregada, aunque no tendrás el ID asignado automáticamente
         res.status(201).json({ id: resultados.insertId, ...nuevaVenta });
     });
+});
+
+// Nuevas rutas para Detalles de Ventas
+app.get('/detalles_ventas', (req, res) => {
+    const query = 'SELECT * FROM detalle_ventas'; // Ajusta esto según el nombre de tu tabla
+    conexion.query(query, (error, resultados) => {
+        if (error) {
+            return res.status(500).json({ message: 'Error al obtener detalles de ventas' });
+        }
+        res.json(resultados);
+    });
+});
+
+app.post('/detalles_ventas', (req, res) => {
+    const nuevoDetalleVenta = req.body; // Obtener el detalle de venta del cuerpo de la solicitud
+    const query = 'INSERT INTO detalle_ventas (id_venta, id_producto, cantidad, precio_unitario) VALUES (?, ?, ?, ?)';
+    
+    conexion.query(query, [nuevoDetalleVenta.id_venta, nuevoDetalleVenta.id_producto, nuevoDetalleVenta.cantidad, nuevoDetalleVenta.precio_unitario], (error, resultados) => {
+        if (error) {
+            return res.status(400).json({ message: 'Error al agregar detalle de venta' });
+        }
+        res.status(201).json({ id_detalle_venta: resultados.insertId, ...nuevoDetalleVenta });
+    });
+});
+
+// Nuevas rutas para Usuarios
+app.get('/usuarios', (req, res) => {
+    const query = 'SELECT * FROM Usuarios';
+    conexion.query(query, (error, resultados) => {
+        if (error) {
+            return res.status(500).json({ message: 'Error al obtener usuarios' });
+        }
+        res.json(resultados);
+    });
+});
+
+app.post('/usuarios', async (req, res) => {
+    const nuevoUsuario = req.body;
+
+    try {
+        if (!nuevoUsuario.email || !nuevoUsuario.contrasena || !nuevoUsuario.nombre) {
+            return res.status(400).json({ message: 'Faltan campos requeridos' });
+        }
+
+        const hashedPassword = await bcrypt.hash(nuevoUsuario.contrasena, 10);
+        const query = 'INSERT INTO Usuarios (email, contrasena, nombre) VALUES (?, ?, ?)';
+
+        conexion.query(query, [nuevoUsuario.email, hashedPassword, nuevoUsuario.nombre], (error, resultados) => {
+            if (error) {
+                console.error("Error en la consulta:", error);
+                return res.status(400).json({ message: 'Error al agregar usuario' });
+            }
+            res.status(201).json({ id_usuario: resultados.insertId, email: nuevoUsuario.email });
+        });
+    } catch (error) {
+        return res.status(500).json({ message: 'Error al procesar la solicitud' });
+    }
 });
 
 const PORT = process.env.PORT || 3000;
