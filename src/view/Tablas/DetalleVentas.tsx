@@ -50,72 +50,72 @@ const DetalleVentas = () => {
     };
 
     return (
-        <div className="container mx-auto p-4 bg-blue-600">
-            <h2 className="text-2xl font-bold mb-4">Detalle de Ventas</h2>
-            <form onSubmit={manejarEnvio} className="mb-4">
+        <div className="container mx-auto p-6 bg-blue-600 text-white rounded-lg shadow-lg">
+            <h2 className="text-3xl font-bold mb-6 text-center">Detalle de Ventas</h2>
+            <form onSubmit={manejarEnvio} className="bg-blue-500 p-6 rounded-lg mb-6 shadow-md">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label className="block mb-1">ID Venta</label>
+                        <label className="block mb-1 font-semibold">ID Venta</label>
                         <input
                             type="number"
                             value={nuevoDetalle.id_venta}
                             onChange={(e) => setNuevoDetalle({ ...nuevoDetalle, id_venta: Number(e.target.value) })}
                             required
-                            className="border p-2 w-full"
+                            className="p-3 rounded border border-gray-300 bg-white text-gray-700 w-full"
                         />
                     </div>
                     <div>
-                        <label className="block mb-1">ID Producto</label>
+                        <label className="block mb-1 font-semibold">ID Producto</label>
                         <input
                             type="number"
                             value={nuevoDetalle.id_producto}
                             onChange={(e) => setNuevoDetalle({ ...nuevoDetalle, id_producto: Number(e.target.value) })}
                             required
-                            className="border p-2 w-full"
+                            className="p-3 rounded border border-gray-300 bg-white text-gray-700 w-full"
                         />
                     </div>
                     <div>
-                        <label className="block mb-1">Precio Unitario</label>
+                        <label className="block mb-1 font-semibold">Precio Unitario</label>
                         <input
                             type="number"
                             value={nuevoDetalle.precio_unitario}
                             onChange={(e) => setNuevoDetalle({ ...nuevoDetalle, precio_unitario: Number(e.target.value) })}
                             required
-                            className="border p-2 w-full"
+                            className="p-3 rounded border border-gray-300 bg-white text-gray-700 w-full"
                         />
                     </div>
                     <div>
-                        <label className="block mb-1">Cantidad</label>
+                        <label className="block mb-1 font-semibold">Cantidad</label>
                         <input
                             type="number"
                             value={nuevoDetalle.cantidad}
                             onChange={(e) => setNuevoDetalle({ ...nuevoDetalle, cantidad: Number(e.target.value) })}
                             required
-                            className="border p-2 w-full"
+                            className="p-3 rounded border border-gray-300 bg-white text-gray-700 w-full"
                         />
                     </div>
                 </div>
-                <button type="submit" className="bg-blue-500 text-white px-4 py-2 mt-2 rounded">Agregar Detalle de Venta</button>
+                <button type="submit" className="w-full bg-green-500 text-white mt-4 py-2 rounded-lg font-semibold hover:bg-green-600 transition">Agregar Detalle de Venta</button>
             </form>
             {mensaje && <div className="bg-green-500 text-white p-2 rounded mb-4">{mensaje}</div>}
-            <table className="min-w-full bg-white border border-gray-200">
-                <thead>
-                    <tr className="bg-gray-200">
-                        <th className="py-2 px-4 border-b">ID Venta</th>
-                        <th className="py-2 px-4 border-b">ID Producto</th>
-                        <th className="py-2 px-4 border-b">Precio Unitario</th>
-                        <th className="py-2 px-4 border-b">Cantidad</th>
-                        <th className="py-2 px-4 border-b">Subtotal</th>
+            <table className="w-full bg-white text-gray-800 rounded-lg shadow-md overflow-hidden">
+                <thead className="bg-blue-500 text-white">
+                    <tr>
+                        <th className="py-3 px-4 border-b">ID Venta</th>
+                        <th className="py-3 px-4 border-b">ID Producto</th>
+                        <th className="py-3 px-4 border-b">Precio Unitario</th>
+                        <th className="py-3 px-4 border-b">Cantidad</th>
+                        <th className="py-3 px-4 border-b">Subtotal</th>
                     </tr>
                 </thead>
                 <tbody>
                     {detallesVentas.map(detalle => (
                         <tr key={detalle.id_detalle_venta} className="hover:bg-gray-100">
-                            <td className="py-2 px-4 border-b">{detalle.id_venta}</td>
-                            <td className="py-2 px-4 border-b">{detalle.id_producto}</td>
-                            <td className="py-2 px-4 border-b">{detalle.precio_unitario}</td>
-                            <td className="py-2 px-4 border-b">{detalle.cantidad}</td>
-                            <td className="py-2 px-4 border-b">{detalle.subtotal}</td>
+                            <td className="py-3 px-4 border-b">{detalle.id_venta}</td>
+                            <td className="py-3 px-4 border-b">{detalle.id_producto}</td>
+                            <td className="py-3 px-4 border-b">{detalle.precio_unitario}</td>
+                            <td className="py-3 px-4 border-b">{detalle.cantidad}</td>
+                            <td className="py-3 px-4 border-b">{detalle.subtotal}</td>
                         </tr>
                     ))}
                 </tbody>

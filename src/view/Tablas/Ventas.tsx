@@ -3,7 +3,7 @@ import { getVentas, addVenta } from '../../api/api';
 
 interface Venta {
     id_venta: number;
-    fecha: string;
+    fecha: string; // Asumimos que la fecha es string en formato ISO o 'YYYY-MM-DD'
     id_cliente: number;
     id_producto: number;
 }
@@ -17,13 +17,16 @@ const Ventas = () => {
     });
     const [mensaje, setMensaje] = useState<string | null>(null);
 
+    // Carga inicial de las ventas
     useEffect(() => {
         const cargarVentas = async () => {
             try {
+                console.log('Cargando ventas desde la API...');
                 const data: Venta[] = await getVentas();
+                console.log('Ventas cargadas:', data);
                 setVentas(data);
             } catch (error) {
-                console.error("Error al cargar ventas:", error);
+                console.error('Error al cargar ventas:', error);
             }
         };
         cargarVentas();
@@ -32,77 +35,81 @@ const Ventas = () => {
     const manejarEnvio = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setMensaje(null);
+        console.log('Intentando agregar nueva venta:', nuevaVenta);
         try {
             const ventaAgregada: Venta = await addVenta(nuevaVenta);
+            console.log('Venta agregada con éxito:', ventaAgregada);
             setVentas([...ventas, ventaAgregada]);
             setNuevaVenta({ fecha: '', id_cliente: 0, id_producto: 0 });
             setMensaje('Venta agregada con éxito!');
         } catch (error) {
-            console.error("Error al agregar venta:", error);
+            console.error('Error al agregar la venta:', error);
             setMensaje('Error al agregar la venta. Inténtalo de nuevo.');
         }
     };
 
     return (
-        <div className="container mx-auto p-4 bg-blue-600">
-            <h2 className="text-2xl font-bold mb-4">Ventas</h2>
-            <form onSubmit={manejarEnvio} className="mb-4">
+        <div className="container mx-auto p-6 bg-blue-600 text-white rounded-lg shadow-lg">
+            <h2 className="text-3xl font-bold mb-6 text-center">Ventas</h2>
+            <form onSubmit={manejarEnvio} className="bg-blue-500 p-6 rounded-lg mb-6 shadow-md">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label className="block text-white mb-1" htmlFor="fecha">Fecha</label>
+                        <label className="block mb-1 font-semibold">Fecha</label>
                         <input
                             type="date"
-                            id="fecha"
                             value={nuevaVenta.fecha}
                             onChange={(e) => setNuevaVenta({ ...nuevaVenta, fecha: e.target.value })}
                             required
-                            className="border p-2 w-full"
+                            className="p-3 rounded border border-gray-300 bg-white text-gray-700 w-full"
                         />
                     </div>
                     <div>
-                        <label className="block text-white mb-1" htmlFor="id_cliente">ID Cliente</label>
+                        <label className="block mb-1 font-semibold">ID Cliente</label>
                         <input
                             type="number"
-                            id="id_cliente"
                             value={nuevaVenta.id_cliente}
                             onChange={(e) => setNuevaVenta({ ...nuevaVenta, id_cliente: Number(e.target.value) })}
                             required
-                            className="border p-2 w-full"
+                            className="p-3 rounded border border-gray-300 bg-white text-gray-700 w-full"
                         />
                     </div>
                     <div>
-                        <label className="block text-white mb-1" htmlFor="id_producto">ID Producto</label>
+                        <label className="block mb-1 font-semibold">ID Producto</label>
                         <input
                             type="number"
-                            id="id_producto"
                             value={nuevaVenta.id_producto}
                             onChange={(e) => setNuevaVenta({ ...nuevaVenta, id_producto: Number(e.target.value) })}
                             required
-                            className="border p-2 w-full"
+                            className="p-3 rounded border border-gray-300 bg-white text-gray-700 w-full"
                         />
                     </div>
                 </div>
-                <button type="submit" className="bg-blue-500 text-white px-4 py-2 mt-2 rounded">Agregar Venta</button>
+                <button type="submit" className="w-full bg-green-500 text-white mt-4 py-2 rounded-lg font-semibold hover:bg-green-600 transition">Agregar Venta</button>
             </form>
+
             {mensaje && <div className="bg-green-500 text-white p-2 rounded mb-4">{mensaje}</div>}
-            <table className="min-w-full bg-white border border-gray-200">
-                <thead>
-                    <tr className="bg-gray-200">
-                        <th className="py-2 px-4 border-b">Fecha</th>
-                        <th className="py-2 px-4 border-b">ID Cliente</th>
-                        <th className="py-2 px-4 border-b">ID Producto</th>
-                    </tr>
-                </thead>
-                <tbody>
-    {ventas.map((venta, index) => (
-        <tr key={`${venta.id_venta}-${index}`} className="hover:bg-gray-100">
-            <td className="py-2 px-4 border-b">{venta.fecha}</td>
-            <td className="py-2 px-4 border-b">{venta.id_cliente}</td>
-            <td className="py-2 px-4 border-b">{venta.id_producto}</td>
-        </tr>
-    ))}
-</tbody>
-            </table>
+
+            {/* Tabla de ventas */}
+            <div className="overflow-x-auto bg-white p-0 rounded-lg shadow-md">
+                <table className="min-w-full bg-white text-gray-800 rounded-lg shadow-md overflow-hidden">
+                    <thead className="bg-blue-500 text-white">
+                        <tr>
+                            <th className="py-3 px-4 border-b">Fecha</th>
+                            <th className="py-3 px-4 border-b">ID Cliente</th>
+                            <th className="py-3 px-4 border-b">ID Producto</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {ventas.map((venta, index) => (
+                            <tr key={`${venta.id_venta}-${index}`} className="hover:bg-gray-100">
+                                <td className="py-3 px-4 border-b">{venta.fecha}</td>
+                                <td className="py-3 px-4 border-b">{venta.id_cliente}</td>
+                                <td className="py-3 px-4 border-b">{venta.id_producto}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 };
