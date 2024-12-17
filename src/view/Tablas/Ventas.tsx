@@ -3,7 +3,7 @@ import { getVentas, addVenta } from '../../api/api';
 
 interface Venta {
     id_venta: number;
-    fecha: string; // Asumimos que la fecha es string en formato ISO o 'YYYY-MM-DD'
+    fecha: string; // Fecha como string ISO
     id_cliente: number;
     id_producto: number;
 }
@@ -16,14 +16,13 @@ const Ventas = () => {
         id_producto: 0,
     });
     const [mensaje, setMensaje] = useState<string | null>(null);
+    const [fechaDesde, setFechaDesde] = useState<string>('');
+    const [fechaHasta, setFechaHasta] = useState<string>('');
 
-    // Carga inicial de las ventas
     useEffect(() => {
         const cargarVentas = async () => {
             try {
-                console.log('Cargando ventas desde la API...');
                 const data: Venta[] = await getVentas();
-                console.log('Ventas cargadas:', data);
                 setVentas(data);
             } catch (error) {
                 console.error('Error al cargar ventas:', error);
@@ -35,10 +34,8 @@ const Ventas = () => {
     const manejarEnvio = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setMensaje(null);
-        console.log('Intentando agregar nueva venta:', nuevaVenta);
         try {
             const ventaAgregada: Venta = await addVenta(nuevaVenta);
-            console.log('Venta agregada con éxito:', ventaAgregada);
             setVentas([...ventas, ventaAgregada]);
             setNuevaVenta({ fecha: '', id_cliente: 0, id_producto: 0 });
             setMensaje('Venta agregada con éxito!');
@@ -47,6 +44,14 @@ const Ventas = () => {
             setMensaje('Error al agregar la venta. Inténtalo de nuevo.');
         }
     };
+
+    const ventasFiltradas = ventas.filter((venta) => {
+        const fechaVenta = new Date(venta.fecha);
+        const desde = fechaDesde ? new Date(fechaDesde) : null;
+        const hasta = fechaHasta ? new Date(fechaHasta) : null;
+
+        return (!desde || fechaVenta >= desde) && (!hasta || fechaVenta <= hasta);
+    });
 
     return (
         <div className="container mx-auto p-6 bg-blue-600 text-white rounded-lg shadow-lg">
@@ -84,25 +89,59 @@ const Ventas = () => {
                         />
                     </div>
                 </div>
-                <button type="submit" className="w-full bg-green-500 text-white mt-4 py-2 rounded-lg font-semibold hover:bg-green-600 transition">Agregar Venta</button>
+                <button
+                    type="submit"
+                    className="w-full bg-green-500 text-white mt-4 py-2 rounded-lg font-semibold hover:bg-green-600 transition"
+                >
+                    Agregar Venta
+                </button>
             </form>
 
             {mensaje && <div className="bg-green-500 text-white p-2 rounded mb-4">{mensaje}</div>}
+
+            {/* Filtros por fecha */}
+            <div className="bg-blue-500 p-6 rounded-lg mb-6 shadow-md">
+                <h3 className="text-xl font-bold mb-4">Filtrar Ventas por Fecha</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label className="block mb-1 font-semibold">Desde</label>
+                        <input
+                            type="date"
+                            value={fechaDesde}
+                            onChange={(e) => setFechaDesde(e.target.value)}
+                            className="p-3 rounded border border-gray-300 bg-white text-gray-700 w-full"
+                        />
+                    </div>
+                    <div>
+                        <label className="block mb-1 font-semibold">Hasta</label>
+                        <input
+                            type="date"
+                            value={fechaHasta}
+                            onChange={(e) => setFechaHasta(e.target.value)}
+                            className="p-3 rounded border border-gray-300 bg-white text-gray-700 w-full"
+                        />
+                    </div>
+                </div>
+            </div>
 
             {/* Tabla de ventas */}
             <div className="overflow-x-auto bg-white p-0 rounded-lg shadow-md">
                 <table className="min-w-full bg-white text-gray-800 rounded-lg shadow-md overflow-hidden">
                     <thead className="bg-blue-500 text-white">
                         <tr>
+                            <th className="py-3 px-4 border-b">ID Venta</th>
                             <th className="py-3 px-4 border-b">Fecha</th>
                             <th className="py-3 px-4 border-b">ID Cliente</th>
                             <th className="py-3 px-4 border-b">ID Producto</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {ventas.map((venta, index) => (
-                            <tr key={`${venta.id_venta}-${index}`} className="hover:bg-gray-100">
-                                <td className="py-3 px-4 border-b">{venta.fecha}</td>
+                        {ventasFiltradas.map((venta) => (
+                            <tr key={venta.id_venta} className="hover:bg-gray-100">
+                                <td className="py-3 px-4 border-b">{venta.id_venta}</td>
+                                <td className="py-3 px-4 border-b">
+                                    {new Date(venta.fecha).toISOString().split('T')[0]}
+                                </td>
                                 <td className="py-3 px-4 border-b">{venta.id_cliente}</td>
                                 <td className="py-3 px-4 border-b">{venta.id_producto}</td>
                             </tr>

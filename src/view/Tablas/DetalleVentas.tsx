@@ -1,22 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import { getDetalleVentas, addDetalleVenta } from '../../api/api';
+import { getDetalleVentas, addDetalleVenta, getProductos } from '../../api/api';
 
 interface DetalleVenta {
     id_detalle_venta: number;
     id_venta: number;
     id_producto: number;
     cantidad: number;
-    precio_unitario: number;
-    subtotal: number;
+    precio: number;
+    importe: number;
 }
 
 const DetalleVentas = () => {
     const [detallesVentas, setDetallesVentas] = useState<DetalleVenta[]>([]);
-    const [nuevoDetalle, setNuevoDetalle] = useState<Omit<DetalleVenta, 'id_detalle_venta' | 'subtotal'>>({
+    const [productos, setProductos] = useState<any[]>([]);
+    const [nuevoDetalle, setNuevoDetalle] = useState<Omit<DetalleVenta, 'id_detalle_venta'>>({
         id_venta: 0,
         id_producto: 0,
-        cantidad: 0,
-        precio_unitario: 0,
+        cantidad: 1,
+        precio: 0,
+        importe: 0,
     });
     const [mensaje, setMensaje] = useState<string | null>(null);
 
@@ -29,24 +31,55 @@ const DetalleVentas = () => {
                 console.error("Error al cargar detalles de ventas:", error);
             }
         };
+
+        const cargarProductos = async () => {
+            try {
+                const data = await getProductos();
+                setProductos(data);
+            } catch (error) {
+                console.error("Error al cargar productos:", error);
+            }
+        };
+
         cargarDetallesVentas();
+        cargarProductos();
     }, []);
 
     const manejarEnvio = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setMensaje(null);
 
-        const subtotal = Number((nuevoDetalle.precio_unitario * nuevoDetalle.cantidad).toFixed(2)); // Calcula subtotal con 2 decimales
-        
         try {
-            const detalleAgregado: DetalleVenta = await addDetalleVenta({ ...nuevoDetalle, subtotal });
-            setDetallesVentas([...detallesVentas, detalleAgregado]);
-            setNuevoDetalle({ id_venta: 0, id_producto: 0, cantidad: 0, precio_unitario: 0 });
+            const importe = nuevoDetalle.precio * nuevoDetalle.cantidad;  // Cálculo del importe
+
+            // Enviar sin el campo 'importe' porque lo calculamos aquí
+            const { id_venta, id_producto, cantidad, precio } = nuevoDetalle;
+
+            const detalleAgregado: DetalleVenta = await addDetalleVenta({ id_venta, id_producto, cantidad, precio });
+
+            // Incluir el importe calculado en la respuesta
+            setDetallesVentas([...detallesVentas, { ...detalleAgregado, importe }]);
+
+            setNuevoDetalle({ id_venta: 0, id_producto: 0, cantidad: 1, precio: 0, importe: 0 });
             setMensaje('Detalle de venta agregado con éxito!');
         } catch (error) {
             console.error("Error al agregar detalle de venta:", error);
             setMensaje('Error al agregar el detalle de venta. Inténtalo de nuevo.');
         }
+    };
+
+    const obtenerPrecioProducto = (id_producto: number) => {
+        const producto = productos.find(p => p.id_producto === id_producto);
+        return producto ? producto.precio : 0; 
+    };
+
+    const manejarCambioProducto = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const id_producto = Number(e.target.value);
+        setNuevoDetalle(prevDetalle => ({
+            ...prevDetalle,
+            id_producto,
+            precio: obtenerPrecioProducto(id_producto),
+        }));
     };
 
     return (
@@ -69,18 +102,17 @@ const DetalleVentas = () => {
                         <input
                             type="number"
                             value={nuevoDetalle.id_producto}
-                            onChange={(e) => setNuevoDetalle({ ...nuevoDetalle, id_producto: Number(e.target.value) })}
+                            onChange={manejarCambioProducto}
                             required
                             className="p-3 rounded border border-gray-300 bg-white text-gray-700 w-full"
                         />
                     </div>
                     <div>
-                        <label className="block mb-1 font-semibold">Precio Unitario</label>
+                        <label className="block mb-1 font-semibold">Precio</label>
                         <input
                             type="number"
-                            value={nuevoDetalle.precio_unitario}
-                            onChange={(e) => setNuevoDetalle({ ...nuevoDetalle, precio_unitario: Number(e.target.value) })}
-                            required
+                            value={nuevoDetalle.precio}
+                            readOnly
                             className="p-3 rounded border border-gray-300 bg-white text-gray-700 w-full"
                         />
                     </div>
@@ -103,9 +135,9 @@ const DetalleVentas = () => {
                     <tr>
                         <th className="py-3 px-4 border-b">ID Venta</th>
                         <th className="py-3 px-4 border-b">ID Producto</th>
-                        <th className="py-3 px-4 border-b">Precio Unitario</th>
+                        <th className="py-3 px-4 border-b">Precio</th>
                         <th className="py-3 px-4 border-b">Cantidad</th>
-                        <th className="py-3 px-4 border-b">Subtotal</th>
+                        <th className="py-3 px-4 border-b">Importe</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -113,9 +145,9 @@ const DetalleVentas = () => {
                         <tr key={detalle.id_detalle_venta} className="hover:bg-gray-100">
                             <td className="py-3 px-4 border-b">{detalle.id_venta}</td>
                             <td className="py-3 px-4 border-b">{detalle.id_producto}</td>
-                            <td className="py-3 px-4 border-b">{detalle.precio_unitario}</td>
+                            <td className="py-3 px-4 border-b">{detalle.precio}</td>
                             <td className="py-3 px-4 border-b">{detalle.cantidad}</td>
-                            <td className="py-3 px-4 border-b">{detalle.subtotal}</td>
+                            <td className="py-3 px-4 border-b">{detalle.importe}</td>
                         </tr>
                     ))}
                 </tbody>

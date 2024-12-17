@@ -7,16 +7,16 @@ import { useNavigate } from 'react-router-dom';
 
 function Login() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState(''); // Hardcodear el email
-  const [password, setPassword] = useState(''); // Hardcodear la contraseña
+  const [email, setEmail] = useState(''); 
+  const [password, setPassword] = useState(''); 
   const [error, setError] = useState('');
 
   const handleLogin = async () => {
-    // Comprobación directa contra los valores hardcodeados
+    
     if (email === 'admin@gmail.com' && password === 'hola123') {
-      navigate('/menu'); // Redireccionar si las credenciales son correctas
+      navigate('/menu'); 
     } else {
-      setError('Credenciales incorrectas'); // Mensaje de error si las credenciales no coinciden
+      setError('Credenciales incorrectas'); 
     }
   };
 

@@ -33,14 +33,14 @@ interface Usuario {
     password: string;
 }
 
-// Estructura del Detalle de Ventas
+// Estructura del Detalle de Ventas (API)
 interface DetalleVenta {
     id_detalle_venta: number;
     id_venta: number;
     id_producto: number;
     cantidad: number;
-    precio_unitario: number;
-    subtotal: number;
+    precio: number; 
+    importe: number; 
 }
 
 // URL de la API 
@@ -101,7 +101,23 @@ export const getDetalleVentas = async (): Promise<DetalleVenta[]> => {
 };
 
 // Función para agregar un nuevo detalle de venta
+/*
 export const addDetalleVenta = async (nuevoDetalleVenta: Omit<DetalleVenta, 'id_detalle_venta'>): Promise<DetalleVenta> => {
     const response = await axios.post<DetalleVenta>(`${API_URL}/detalles_ventas`, nuevoDetalleVenta);
     return response.data;
 };
+*/
+
+export const addDetalleVenta = async (
+    nuevoDetalleVenta: Omit<DetalleVenta, 'id_detalle_venta' | 'importe'>
+): Promise<DetalleVenta> => {
+    const response = await axios.post<DetalleVenta>(`${API_URL}/detalles_ventas`, nuevoDetalleVenta);
+    return response.data;
+};
+
+// Función para obtener un producto por su ID
+export const getProductoPorId = async (id_producto: number): Promise<Producto | null> => {
+    const response = await axios.get<Producto>(`${API_URL}/productos/${id_producto}`);
+    return response.data || null;
+};
+

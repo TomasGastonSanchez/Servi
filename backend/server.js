@@ -110,9 +110,9 @@ app.post('/ventas', (req, res) => {
     });
 });
 
-// Nuevas rutas para Detalles de Ventas
+// Nuevas rutas para Detalle de Ventas
 app.get('/detalles_ventas', (req, res) => {
-    const query = 'SELECT * FROM detalle_ventas'; // Ajusta esto según el nombre de tu tabla
+    const query = 'SELECT * FROM detalle_ventas';
     conexion.query(query, (error, resultados) => {
         if (error) {
             return res.status(500).json({ message: 'Error al obtener detalles de ventas' });
@@ -122,14 +122,26 @@ app.get('/detalles_ventas', (req, res) => {
 });
 
 app.post('/detalles_ventas', (req, res) => {
-    const nuevoDetalleVenta = req.body; // Obtener el detalle de venta del cuerpo de la solicitud
-    const query = 'INSERT INTO detalle_ventas (id_venta, id_producto, cantidad, precio_unitario) VALUES (?, ?, ?, ?)';
-    
-    conexion.query(query, [nuevoDetalleVenta.id_venta, nuevoDetalleVenta.id_producto, nuevoDetalleVenta.cantidad, nuevoDetalleVenta.precio_unitario], (error, resultados) => {
+    const { id_venta, id_producto, cantidad, precio } = req.body;
+
+    if (!id_venta || !id_producto || !cantidad || !precio) {
+        return res.status(400).json({ message: 'Faltan campos requeridos' });
+    }
+
+    const queryInsert = 'INSERT INTO detalle_ventas (id_venta, id_producto, cantidad, precio) VALUES (?, ?, ?, ?)';
+    conexion.query(queryInsert, [id_venta, id_producto, cantidad, precio], (error, resultados) => {
         if (error) {
             return res.status(400).json({ message: 'Error al agregar detalle de venta' });
         }
-        res.status(201).json({ id_detalle_venta: resultados.insertId, ...nuevoDetalleVenta });
+
+        const id_detalle_venta = resultados.insertId;
+        const querySelect = 'SELECT * FROM detalle_ventas WHERE id_detalle_venta = ?';
+        conexion.query(querySelect, [id_detalle_venta], (error, filas) => {
+            if (error) {
+                return res.status(500).json({ message: 'Error al obtener el detalle de venta insertado' });
+            }
+            res.status(201).json(filas[0]);
+        });
     });
 });
 
