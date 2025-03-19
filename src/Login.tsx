@@ -47,12 +47,12 @@ function Login() {
             </p>
           </div>
         </div>
-        <div className='bg-blue-800'>
-          <h1 className='bg-blue-900 p-4 text-white text-center font-semibold shadow-white text-4xl shadow-lg '>
+        <div className="bg-blue-800">
+          <h1 className="bg-blue-900 p-4 text-white text-center font-semibold shadow-white text-4xl shadow-lg">
             <img src={Logo3} alt="Icono" className="w-60 h-23 mx-auto rounded-xl" />
           </h1>
           <br />
-          <h2 className='text-white font-bold text-center text-4xl'>Inicia Sesión:</h2>
+          <h2 className="text-white font-bold text-center text-4xl">Inicia Sesión:</h2>
           {error && <p className="text-red-500 text-center">{error}</p>}
           <div className="form-floating mb-3 m-5">
             <input
@@ -85,12 +85,14 @@ function Login() {
               Iniciar Sesión
             </button>
           </div>
-          <div className='m-5 my-2 text-white'>
+          <div className="m-5 my-2 text-white">
             <p>¿No tienes una cuenta?</p>
-            <button onClick={goToRegister}>Crea una desde acá</button>
+            <button className="hover:text-blue-400 p-2" onClick={goToRegister}>
+              Crea una desde acá
+            </button>
           </div>
-          <footer className='text-center mt-4 absolute bottom-0 p-1 m-1'>
-            <p>Copyright©2024 todos los derechos de autor reservados</p>
+          <footer className="text-center text-white mt-4 absolute bottom-0 p-1 m-1">
+            <p>Copyright©2024 todos los derechos de autor reservados.</p>
           </footer>
         </div>
       </div>
