@@ -1,4 +1,4 @@
-const express = require('express'); 
+const express = require('express');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 const conexion = require('./db'); // Importar la conexión
@@ -16,27 +16,71 @@ app.get('/', (req, res) => {
     res.send('API funcionando');
 });
 
-// Ruta para iniciar sesión
-app.post('/api/login', async (req, res) => {
-    const { usuario, contrasena } = req.body;
-
-    const query = 'SELECT * FROM Usuarios WHERE usuario = ?';
-    conexion.query(query, [usuario], async (error, resultados) => {
+// Ruta para obtener todos los usuarios
+app.get('/usuarios', (req, res) => {
+    const query = 'SELECT * FROM usuarios';
+    conexion.query(query, (error, resultados) => {
         if (error) {
-            return res.status(500).json({ message: 'Error en la base de datos' });
+            return res.status(500).json({ message: 'Error al obtener usuarios' });
+        }
+        res.json(resultados);
+    });
+});
+
+// Ruta para registrar un nuevo usuario
+app.post('/usuarios', async (req, res) => {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+        return res.status(400).json({ message: 'Faltan campos requeridos' });
+    }
+
+    // Encriptar la contraseña
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const query = 'INSERT INTO usuarios (email, password) VALUES (?, ?)';
+    conexion.query(query, [email, hashedPassword], (error, resultados) => {
+        if (error) {
+            console.error('Error al registrar usuario:', error.message);
+            return res.status(500).json({ message: 'Error al registrar usuario', error: error.message });
+        }        
+        res.status(201).json({ message: 'Usuario creado correctamente', id: resultados.insertId, email });
+    });
+});
+
+// Ruta de login (nueva)
+app.post('/login', (req, res) => {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+        return res.status(400).json({ message: 'Faltan campos requeridos' });
+    }
+
+    const query = 'SELECT * FROM usuarios WHERE email = ?';
+    conexion.query(query, [email], (err, results) => {
+        if (err) {
+            return res.status(500).json({ message: 'Error al buscar el usuario' });
         }
 
-        if (resultados.length === 0) {
-            return res.status(401).json({ message: 'Usuario o contraseña incorrectos' });
+        if (results.length === 0) {
+            return res.status(400).json({ message: 'Usuario no encontrado' });
         }
 
-        const user = resultados[0];
-        const match = await bcrypt.compare(contrasena, user.contrasena);
-        if (!match) {
-            return res.status(401).json({ message: 'Usuario o contraseña incorrectos' });
-        }
+        const usuario = results[0];
 
-        res.status(200).json({ message: 'Inicio de sesión exitoso' });
+        // Comparar las contraseñas
+        bcrypt.compare(password, usuario.password, (err, match) => {
+            if (err) {
+                return res.status(500).json({ message: 'Error al comparar contraseñas' });
+            }
+
+            if (!match) {
+                return res.status(400).json({ message: 'Contraseña incorrecta' });
+            }
+
+            // Si todo es correcto, devolver una respuesta exitosa
+            res.status(200).json({ message: 'Login exitoso', usuario });
+        });
     });
 });
 
@@ -143,40 +187,6 @@ app.post('/detalles_ventas', (req, res) => {
             res.status(201).json(filas[0]);
         });
     });
-});
-
-// Nuevas rutas para Usuarios
-app.get('/usuarios', (req, res) => {
-    const query = 'SELECT * FROM Usuarios';
-    conexion.query(query, (error, resultados) => {
-        if (error) {
-            return res.status(500).json({ message: 'Error al obtener usuarios' });
-        }
-        res.json(resultados);
-    });
-});
-
-app.post('/usuarios', async (req, res) => {
-    const nuevoUsuario = req.body;
-
-    try {
-        if (!nuevoUsuario.email || !nuevoUsuario.contrasena || !nuevoUsuario.nombre) {
-            return res.status(400).json({ message: 'Faltan campos requeridos' });
-        }
-
-        const hashedPassword = await bcrypt.hash(nuevoUsuario.contrasena, 10);
-        const query = 'INSERT INTO Usuarios (email, contrasena, nombre) VALUES (?, ?, ?)';
-
-        conexion.query(query, [nuevoUsuario.email, hashedPassword, nuevoUsuario.nombre], (error, resultados) => {
-            if (error) {
-                console.error("Error en la consulta:", error);
-                return res.status(400).json({ message: 'Error al agregar usuario' });
-            }
-            res.status(201).json({ id_usuario: resultados.insertId, email: nuevoUsuario.email });
-        });
-    } catch (error) {
-        return res.status(500).json({ message: 'Error al procesar la solicitud' });
-    }
 });
 
 const PORT = process.env.PORT || 3000;

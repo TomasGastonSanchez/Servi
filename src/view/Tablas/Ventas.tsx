@@ -4,7 +4,7 @@ import { getVentas, addVenta } from '../../api/api';
 
 interface Venta {
     id_venta: number;
-    fecha: string; // Fecha como string ISO
+    fecha: string; 
     id_cliente: number;
     id_producto: number;
 }
