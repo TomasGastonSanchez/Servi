@@ -86,10 +86,11 @@ function Login() {
             </button>
           </div>
           <div className="m-5 my-2 text-white">
-            <p>¿No tienes una cuenta?</p>
-            <button className="hover:text-blue-400 p-2" onClick={goToRegister}>
-              Crea una desde acá
-            </button>
+            <p>¿No tienes una cuenta?
+              <button className="hover:text-blue-400 p-1" onClick={goToRegister}>
+                Crea una desde acá
+              </button>
+            </p>
           </div>
           <footer className="text-center text-white mt-4 absolute bottom-0 p-1 m-1">
             <p>Copyright©2024 todos los derechos de autor reservados.</p>
