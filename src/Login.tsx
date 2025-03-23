@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import fondoLogin from './galery/fondoLogin.jpg';
 import { Container } from 'reactstrap';
 import '@fortawesome/fontawesome-free/css/all.min.css';

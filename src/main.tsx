@@ -6,9 +6,9 @@ import MenuPrincipal from './view/MenuPrincipal.tsx';
 import Register from './Register';
 import './index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Clientes from './view/Tablas/Clientes.tsx';
-import Productos from './view/Tablas/Productos.tsx';
-import Ventas from './view/Tablas/Ventas.tsx';
+//import Clientes from './view/Tablas/Clientes.tsx';
+//import Productos from './view/Tablas/Productos.tsx';
+//import Ventas from './view/Tablas/Ventas.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
