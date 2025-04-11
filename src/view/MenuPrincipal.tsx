@@ -25,7 +25,7 @@ function MenuPrincipal() {
       case 'ayuda':
         return (
           <div className="p-8 text-white">
-            <h2 className="text-3xl font-bold mb-4 text-center text-yellow-300">Ayuda y Soporte</h2>
+            <h2 className="text-3xl font-bold mb-4 text-center text-white-300">Ayuda y Soporte</h2>
             <div className="bg-blue-800 p-6 rounded-lg shadow-md mb-6">
               <p className="mb-2 text-lg">Si necesitas soporte, puedes contactarnos a través de los siguientes medios:</p>
               <ul className="list-disc list-inside text-lg">

@@ -29,7 +29,7 @@ function Register() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-blue-900">
       <div className="bg-blue-800 p-8 rounded-2xl shadow-lg w-96 text-center">
-        <h2 className="text-yellow-300 text-3xl font-bold mb-4">Registrarse</h2>
+        <h2 className="text-yellow-50 text-3xl font-bold mb-4">Registrarse</h2>
         {error && <p className="text-red-500 mb-4">{error}</p>}
         <div className="mb-4">
           <input
@@ -57,7 +57,7 @@ function Register() {
         </button>
         <button
           onClick={() => navigate('/login')}
-          className="mt-4 w-full text-yellow-300 hover:underline"
+          className="mt-4 w-full text-zinc-50 font-bold hover:underline"
         >
           Volver al inicio
         </button>

@@ -81,13 +81,13 @@ function Login() {
             </label>
           </div>
           <div className="d-grid gap-2 py-2 m-5 my-2">
-            <button onClick={handleLogin} className="btn btn-primary hover:bg-blue-700 transition-color" type="button">
+            <button onClick={handleLogin} className="btn btn-primary hover:bg-blue-700 transition-color font-bold" type="button">
               Iniciar Sesión
             </button>
           </div>
           <div className="m-5 my-2 text-white">
             <p>¿No tienes una cuenta?
-              <button className="hover:text-blue-400 p-1" onClick={goToRegister}>
+              <button className="hover:text-blue-400 p-1 font-bold" onClick={goToRegister}>
                 Crea una desde acá
               </button>
             </p>
