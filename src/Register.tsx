@@ -28,7 +28,7 @@ function Register() {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-blue-900">
-      <div className="bg-blue-800 p-8 rounded-2xl shadow-lg w-96 text-center">
+      <div className="bg-blue-700 p-8 rounded-2xl shadow-lg w-96 text-center">
         <h2 className="text-yellow-50 text-3xl font-bold mb-4">Registrarse</h2>
         {error && <p className="text-red-500 mb-4">{error}</p>}
         <div className="mb-4">
@@ -37,7 +37,7 @@ function Register() {
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-2 rounded-lg bg-blue-700 text-white focus:ring-2 focus:ring-yellow-300 outline-none"
+            className="w-full p-2 rounded-lg bg-white-700 text-white focus:ring-2 focus:ring-yellow-300 outline-none"
           />
         </div>
         <div className="mb-4">
@@ -46,12 +46,12 @@ function Register() {
             placeholder="Contraseña"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-2 rounded-lg bg-blue-700 text-white focus:ring-2 focus:ring-yellow-300 outline-none"
+            className="w-full p-2 rounded-lg bg-white-700 text-white focus:ring-2 focus:ring-yellow-300 outline-none"
           />
         </div>
         <button
           onClick={handleRegister}
-          className="w-full bg-yellow-300 text-blue-900 font-bold py-2 px-4 rounded-lg hover:bg-yellow-400 transition duration-200"
+          className="w-full bg-blue-900 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-800 transition duration-200"
         >
           Crear Cuenta
         </button>
