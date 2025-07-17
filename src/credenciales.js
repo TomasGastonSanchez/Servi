@@ -1,3 +1,4 @@
+/*
 <<<<<<< HEAD
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
@@ -44,3 +45,4 @@ const appFirebase = initializeApp(firebaseConfig);
 export default appFirebase
 >>>>>>> 54b95b0 (commit hecho)
 const analytics = getAnalytics(app);
+*/

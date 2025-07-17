@@ -20,10 +20,36 @@ function Login() {
     }
   }, []);
   
-  const handleLogin = () => {
-    // Saltear validación y entrar directo al sistema
-    navigate('/menu');
-  };
+
+
+/* METODO DE LOGIN CORRECTO
+
+const handleLogin = async () => {
+  try {
+    const response = await fetch('https://tubackendrailway.com/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      navigate('/menu');
+    } else {
+      alert('Usuario o contraseña incorrectos');
+    }
+  } catch (error) {
+    console.error('Error al iniciar sesión:', error);
+  }
+};
+*/
+
+
+//METODO DE LOGIN TEMPORAL
+const handleLogin = () => {
+  navigate('/menu');
+};
 
   const goToRegister = () => {
     navigate('/register');

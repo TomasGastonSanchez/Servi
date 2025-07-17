@@ -44,7 +44,10 @@ interface DetalleVenta {
 }
 
 // URL de la API 
-const API_URL = 'http://localhost:3000';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+//const API_URL = 'http://localhost:3000';
+
 
 // Función para obtener todos los clientes
 export const getClientes = async (): Promise<Cliente[]> => {
