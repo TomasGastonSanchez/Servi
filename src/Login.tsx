@@ -9,47 +9,39 @@ function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
-
+  // 🔔 Quitamos la alerta temporal
   useEffect(() => {
-    const alertaYaMostrada = localStorage.getItem('alertaLoginMostrada');
-  
-    if (!alertaYaMostrada) {
-      alert('⚠️ ¡ALERTA! Actualmente la aplicación funciona sin base de datos por tareas de mantenimiento. Para ver el sistema, simplemente toque en "INICIAR SESIÓN".');
-      localStorage.setItem('alertaLoginMostrada', 'true');
-    }
+    localStorage.removeItem('alertaLoginMostrada');
   }, []);
-  
 
-
-/* METODO DE LOGIN CORRECTO
-
-const handleLogin = async () => {
-  try {
-    const response = await fetch('https://tubackendrailway.com/api/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
-    });
-
-    const data = await response.json();
-
-    if (data.success) {
-      navigate('/menu');
-    } else {
-      alert('Usuario o contraseña incorrectos');
+  // ✅ Método real de login
+  const handleLogin = async () => {
+    if (!email || !password) {
+      setError('Por favor, completa ambos campos');
+      return;
     }
-  } catch (error) {
-    console.error('Error al iniciar sesión:', error);
-  }
-};
-*/
 
+    try {
+      const response = await fetch('http://localhost:3000/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
 
-//METODO DE LOGIN TEMPORAL
-const handleLogin = () => {
-  navigate('/menu');
-};
+      const data = await response.json();
+
+      if (data.success) {
+        navigate('/menu');
+      } else {
+        setError('Usuario o contraseña incorrectos');
+      }
+    } catch (error) {
+      console.error('Error al iniciar sesión:', error);
+      setError('Hubo un problema al conectar con el servidor');
+    }
+  };
 
   const goToRegister = () => {
     navigate('/register');
@@ -67,12 +59,16 @@ const handleLogin = () => {
             </p>
           </div>
         </div>
+
         <div className="bg-blue-800">
           <h1 className="bg-blue-900 p-4 text-white text-center font-semibold shadow-white text-4xl shadow-lg">
             <img src={Logo3} alt="Icono" className="w-60 h-23 mx-auto rounded-xl" />
           </h1>
           <br />
           <h2 className="text-white font-bold text-center text-4xl">Inicia Sesión:</h2>
+
+          {error && <div className="text-red-500 text-center my-2">{error}</div>}
+
           <div className="form-floating mb-3 m-5">
             <input
               type="email"
@@ -86,6 +82,7 @@ const handleLogin = () => {
               <i className="fas fa-envelope"></i> Email
             </label>
           </div>
+
           <div className="form-floating mb-2 m-5 my-1">
             <input
               type="password"
@@ -99,11 +96,17 @@ const handleLogin = () => {
               <i className="fa-solid fa-lock"></i> Contraseña
             </label>
           </div>
+
           <div className="d-grid gap-2 py-2 m-5 my-2">
-            <button onClick={handleLogin} className="btn btn-primary hover:bg-blue-700 transition-color font-bold" type="button">
+            <button
+              onClick={handleLogin}
+              className="btn btn-primary hover:bg-blue-700 transition-color font-bold"
+              type="button"
+            >
               Iniciar Sesión
             </button>
           </div>
+
           <div className="m-5 my-2 text-white">
             <p>¿No tienes una cuenta?
               <button className="hover:text-blue-400 p-1 font-bold" onClick={goToRegister}>
@@ -111,6 +114,7 @@ const handleLogin = () => {
               </button>
             </p>
           </div>
+
           <footer className="text-center text-white mt-4 absolute bottom-0 p-1 m-1">
             <p>Copyright©2024 todos los derechos de autor reservados.</p>
           </footer>

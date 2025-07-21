@@ -37,7 +37,7 @@ function Register() {
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-2 rounded-lg bg-white-700 text-white focus:ring-2 focus:ring-yellow-300 outline-none"
+            className="w-full p-2 rounded-lg bg-white-700 text-gray-900 focus:ring-2 focus:ring-yellow-300 outline-none"
           />
         </div>
         <div className="mb-4">
@@ -46,7 +46,7 @@ function Register() {
             placeholder="Contraseña"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-2 rounded-lg bg-white-700 text-white focus:ring-2 focus:ring-yellow-300 outline-none"
+            className="w-full p-2 rounded-lg bg-white-700 text-gray-900 focus:ring-2 focus:ring-yellow-300 outline-none"
           />
         </div>
         <button

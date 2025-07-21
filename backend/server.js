@@ -1,7 +1,11 @@
+require('dotenv').config({ path: '../.env' });
+console.log("Host desde .env:", process.env.DB_HOST);
+
 const express = require('express');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const conexion = require('./db'); // Importar la conexión
+
 
 const app = express();
 
@@ -79,7 +83,7 @@ app.post('/login', (req, res) => {
             }
 
             // Si todo es correcto, devolver una respuesta exitosa
-            res.status(200).json({ message: 'Login exitoso', usuario });
+            res.status(200).json({ success: true, message: 'Login exitoso', usuario });
         });
     });
 });
