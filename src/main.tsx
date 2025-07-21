@@ -18,7 +18,6 @@ createRoot(document.getElementById('root')!).render(
         <Route path="/login" element={<Login />} />
         <Route path="/menu" element={<MenuPrincipal />} />
         <Route path="/register" element={<Register />} />
-        {/* Puedes descomentar las siguientes rutas si necesitas esas páginas */}
         {/* <Route path="/clientes" element={<Clientes />} /> */}
         {/* <Route path="/productos" element={<Productos />} /> */}
         {/* <Route path="/ventas" element={<Ventas />} /> */}
